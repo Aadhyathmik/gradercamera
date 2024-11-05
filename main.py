@@ -34,12 +34,22 @@ if img is not None:
     gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
 
+     # Apply adaptive thresholding to enhance text
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY, 11, 2)
+
+    # Optional: Apply a slight blur to reduce noise
+    blur = cv2.medianBlur(thresh, 3)
+
+    # Display preprocessed image
+    st.image(blur, caption="Preprocessed Image for OCR", use_column_width=True)
+
     # Display preprocessed image (optional)
-    st.image(thresh, caption="Preprocessed Image for OCR", use_column_width=True)
+    #st.image(thresh, caption="Preprocessed Image for OCR", use_column_width=True)
 
     # Step 3: Extract Text using Tesseract OCR
     st.write("Extracting text from the image...")
-    extracted_text = pytesseract.image_to_string(thresh)
+    extracted_text = pytesseract.image_to_string(blur, config="--psm 6")
     st.text_area("Extracted Text", extracted_text, height=300)
 
     # Step 4: Process the Text (customize this based on your needs)
