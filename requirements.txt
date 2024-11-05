@@ -3,6 +3,6 @@ streamlit
 pandas
 PyPDF2
 openai
-opencv-python-headless==4.5.1.48
+opencv-python-headless
 pytesseract
 pillow
