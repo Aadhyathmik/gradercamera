@@ -4,5 +4,6 @@ pandas
 PyPDF2
 openai
 opencv-python-headless
+tesseract-ocr
 pytesseract
 pillow
