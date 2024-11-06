@@ -22,33 +22,32 @@ else:
 
 # Step 2: Process the Image
 if img is not None:
-    st.write("Processing the image...")
     image = Image.open(img)
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    st.image(image, caption="Original Image", use_column_width=True)
+
+    # Enhance contrast and sharpness
+    enhancer = ImageEnhance.Contrast(image)
+    image = enhancer.enhance(2)  # Adjust the factor as needed for clarity
+
+    sharpness_enhancer = ImageEnhance.Sharpness(image)
+    image = sharpness_enhancer.enhance(2)  # Sharpen the image further
+
+    st.image(image, caption="Enhanced Image", use_column_width=True)
 
     # Convert to OpenCV format
     img_cv = np.array(image)
     img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR)
 
-    # Optional: Preprocess the image (grayscale, thresholding, etc.)
+    # Grayscale and apply adaptive thresholding
     gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
-    _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
-
-     # Apply adaptive thresholding to enhance text
     thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                    cv2.THRESH_BINARY, 11, 2)
 
-    # Optional: Apply a slight blur to reduce noise
+    # Optional: Slight blur to reduce noise
     blur = cv2.medianBlur(thresh, 3)
-
-    # Display preprocessed image
     st.image(blur, caption="Preprocessed Image for OCR", use_column_width=True)
 
-    # Display preprocessed image (optional)
-    #st.image(thresh, caption="Preprocessed Image for OCR", use_column_width=True)
-
-    # Step 3: Extract Text using Tesseract OCR
-    st.write("Extracting text from the image...")
+    # OCR extraction
     extracted_text = pytesseract.image_to_string(blur, config="--psm 6")
     st.text_area("Extracted Text", extracted_text, height=300)
 
